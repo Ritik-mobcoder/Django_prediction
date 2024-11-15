@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience Prediction App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Experience Prediction App</h1>
+        <form id="predictionForm">
+            <label for="experience">Enter your experience (in years):</label>
+            <input type="number" id="experience" name="experience" min="0" max="50" step="1" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="result" class="result"></div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Clear previous results or errors
+            resultDiv.textContent = '';
+            errorDiv.textContent = '';
+
+            // Collect experience value from form
+            const experience = parseInt(document.getElementById('experience').value);
+
+            if (experience < 0) {
+                errorDiv.textContent = 'Please enter a valid experience.';
+                return;
+            }
+
+            try {
+                // Make API request
+                const response = await fetch('http://127.0.0.1:8000/expirence', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ experience }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch prediction');
+                }
+
+                const result = await response.json();
+                resultDiv.textContent = `Prediction Salary: ${result.prediction_salary}`;
+            } catch (error) {
+                errorDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

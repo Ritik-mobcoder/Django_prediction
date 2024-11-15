@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic Survival Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Titanic Survival Prediction</h1>
+        <form id="predictionForm">
+            <label for="pclass">Passenger Class</label>
+            <input type="number" id="pclass" name="pclass" min="1" max="3" value="1" required>
+
+            <label for="sex">Sex</label>
+            <select id="sex" name="sex" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" min="0" max="100" value="30" required>
+
+            <label for="sibsp">Number of Siblings/Spouses Aboard</label>
+            <input type="number" id="sibsp" name="sibsp" min="0" max="10" value="0" required>
+
+            <label for="parch">Number of Parents/Children Aboard</label>
+            <input type="number" id="parch" name="parch" min="0" max="10" value="0" required>
+
+            <label for="fare">Fare</label>
+            <input type="number" id="fare" name="fare" min="0" max="500" step="0.01" value="50.0" required>
+
+            <button type="submit">Submit</button>
+        </form>
+        <div id="result" class="result"></div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            resultDiv.textContent = '';
+            errorDiv.textContent = '';
+
+            const formData = new FormData(form);
+            const data = {
+                pclass: parseInt(formData.get('pclass')),
+                sex: formData.get('sex') === 'male' ? 1 : 0,
+                age: parseInt(formData.get('age')),
+                sibsp: parseInt(formData.get('sibsp')),
+                parch: parseInt(formData.get('parch')),
+                fare: parseFloat(formData.get('fare')),
+            };
+
+            try {
+                // Make API request
+                const response = await fetch('http://127.0.0.1:8000/titanic', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch prediction');
+                }
+
+                const result = await response.json();
+                resultDiv.textContent = `Prediction Result: ${result.result}`;
+            } catch (error) {
+                errorDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

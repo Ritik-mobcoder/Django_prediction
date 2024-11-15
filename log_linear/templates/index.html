@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Model</title>
+</head>
+
+<body>
+    <h1>Choose a Model</h1>
+    <form action="{% url 'logistic' %}" method="get" style="display:inline;">
+        <button type="submit">Titanic Survival Prediction</button>
+    </form>
+    <form action="{% url 'regression' %}" method="get" style="display:inline;">
+        <button type="submit">Tip Prediction </button>
+    </form>
+</body>
+
+</html>
